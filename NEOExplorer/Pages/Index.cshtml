@@ -1,0 +1,80 @@
+﻿@page
+@using NEOExplorer.Data
+@model IndexModel
+@{
+    ViewData["Title"] = "Home page";
+}
+
+@if (Model.NeoData == null)
+{
+    <div class="text-center pb-3">
+        <h1><b>Asteroid Data Filter</b></h1>
+        <p>This web-app receives data from NASA on NEOs (Near Earth Objects) and lets you filter them with fun and interesting categories!
+            <br/>Select any combination of the options below to filter the near earth objects.</p>
+    </div>
+
+    <form method="post">
+        <div class="row mb-3">
+            <div class="col-4">
+                <select asp-for="BiggerThan" size="3" class="form-select">
+                    <option value="980">Bigger than the Star Trek Enterprise</option>
+                    <option value="5250">Bigger than a Star Wars Star Destroyer</option>
+                    <option value="48048">Bigger than Seattle, Washington</option>
+                </select>
+            </div>
+            <div class="col-4">
+                <select asp-for="IsHazardous" size="3" class="form-select">
+                    <option value="true">Has potential to cause a Roland Emmerich film</option>
+                    <option value="false">Does not have potential to cause a Roland Emmerich film</option>
+                </select>
+            </div>
+            <div class="col-4">
+                <select asp-for="FasterThan" size="3" class="form-select">
+                    <option value="17000">Faster than the Space Shuttle Columbia</option>
+                    <option value="35000">Faster than the power of 1,250 Usain Bolts</option>
+                    <option value="50000">Faster than the power of 77 X-Wings</option>
+                </select>
+            </div>
+        </div>
+        <div class="text-center">
+            <input type="submit" class="btn btn-primary btn-lg" value="FILTER NEOs" />
+        </div>
+    </form>
+}
+else
+{
+    var biggerThanText = @Model.BiggerThan != null ? $"are bigger than {@Model.BiggerThan} feet" : string.Empty;
+    var isHazardousText = @Model.IsHazardous is "true" ? "and are potentially hazardous" : string.Empty;
+    var isFasterThanText = @Model.FasterThan != null ? $"and are faster than {@Model.FasterThan} MPH" : string.Empty;
+
+
+    <h1>Results</h1>
+    <p>The following asteroids @biggerThanText @isHazardousText @isFasterThanText</p>
+
+    <table class="table">
+        <thead>
+            <tr>
+                <th>NAME</th>
+                <th>SIZE</th>
+                <th>POTENTIALLY HAZARDOUS</th>
+                <th>SPEED</th>
+            </tr>
+        </thead>
+        <tbody>
+
+            @foreach (NearEarthObject neoItem in Model.NeoData)
+            {
+                <tr>
+                    <td><b>@neoItem.NameLimited</b></td>
+                    <td>@neoItem.EstimatedDiameter.Feet.EstimatedDiameterMin feet</td>
+                    <td>@neoItem.IsPotentiallyHazardousAsteroid</td>
+                    <td>@neoItem.RelativeVelocityFromClosestApproachToToday MPH</td>
+                </tr>
+
+            }
+
+        </tbody>
+    </table>
+
+    <a href="/">Return to asteroid data filter...</a>
+}
